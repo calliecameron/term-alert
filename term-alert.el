@@ -1,4 +1,4 @@
-;;; term-alert.el --- get notifications when commands complete in the Emacs terminal emulator
+;;; term-alert.el --- Get notifications when commands complete in the Emacs terminal emulator
 
 ;; Copyright (C) 2014 Callum J. Cameron
 
