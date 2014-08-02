@@ -25,7 +25,7 @@ You need to install the Emacs package, and configure your shell to interact with
 ### Emacs
 
 1. Install the dependencies: [term-cmd](https://github.com/CallumCameron/term-cmd) and [simple-notify](https://github.com/CallumCameron/simple-notify)
-1. Add this directory to your Emacs load path
+2. Add this directory to your Emacs load path
 3. `(require 'term-alert)`
 
 You'll want to set up key bindings for `term-alert-next-command-toggle` and `term-alert-all-toggle`. My configuration looks like this (I use [multi-term](http://www.emacswiki.org/emacs/MultiTerm); a plain term.el setup will be slightly different):
