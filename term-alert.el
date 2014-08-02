@@ -6,7 +6,7 @@
 ;; Version: 1.0
 ;; Url: https://github.com/CallumCameron/term-alert
 ;; Keywords: notifications processes
-;; Package-Requires: ((term-cmd "1.0") (simple-notify "1.0"))
+;; Package-Requires: ((term-cmd "1.0") (alert "1.1"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -61,8 +61,8 @@
 ;; Emacs:
 ;;
 ;;   1. Install the dependencies: 'term-cmd'
-;;      (https://github.com/CallumCameron/term-cmd) and 'simple-notify'
-;;      (https://github.com/CallumCameron/simple-notify)
+;;      (https://github.com/CallumCameron/term-cmd) and 'alert'
+;;      (https://github.com/jwiegley/alert)
 ;;   2. Make sure this file is on your load path
 ;;   3. (require 'term-alert)
 ;;
@@ -116,7 +116,7 @@
 
 (require 'term)
 (require 'term-cmd)
-(require 'simple-notify)
+(require 'alert)
 
 (defvar term-alert-count -1 "Number of alerts to display for this buffer, after which alert mode will disable itself; if < 0, no limit.")
 (make-variable-buffer-local 'term-alert-count)
@@ -167,8 +167,9 @@ explicitly disabled."
   "Respond to a completed command.  C and A are unused."
   (when term-alert-mode
     (when (not (eq term-alert-count 0))
-      (simple-notify
-       (concat "Command completed in " (buffer-name)))
+      (alert
+       (concat "Command completed in " (buffer-name))
+       :title "Emacs")
       (when (> term-alert-count 0)
         (term-alert-set-count (- term-alert-count 1))))))
 

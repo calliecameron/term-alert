@@ -24,7 +24,7 @@ You need to install the Emacs package, and configure your shell to interact with
 
 ### Emacs
 
-1. Install the dependencies: [term-cmd](https://github.com/CallumCameron/term-cmd) and [simple-notify](https://github.com/CallumCameron/simple-notify)
+1. Install the dependencies: [term-cmd](https://github.com/CallumCameron/term-cmd) and [alert](https://github.com/jwiegley/alert)
 2. Add this directory to your Emacs load path
 3. `(require 'term-alert)`
 
