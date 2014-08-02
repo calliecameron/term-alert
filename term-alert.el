@@ -98,7 +98,10 @@
 ;;     {
 ;;         print '\033TeRmCmD term-alert-done'
 ;;     }
-;;     precmd_functions=($precmd_functions term-alert-precmd)
+;;
+;;     if [[ "${TERM}" =~ 'eterm' ]]; then
+;;         precmd_functions=($precmd_functions term-alert-precmd)
+;;     fi
 ;;
 ;; The file 'enable.zsh' in this package's git repository does exactly
 ;; that; source it in your zshrc and everything will be set up

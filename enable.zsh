@@ -4,4 +4,7 @@ function term-alert-precmd()
 {
     print '\033TeRmCmD term-alert-done'
 }
-precmd_functions=($precmd_functions term-alert-precmd)
+
+if [[ "${TERM}" =~ 'eterm' ]]; then
+    precmd_functions=($precmd_functions term-alert-precmd)
+fi
