@@ -3,7 +3,10 @@
 ;; Copyright (C) 2014 Callum J. Cameron
 
 ;; Author: Callum J. Cameron <cjcameron7@gmail.com>
+;; Version: 1.0
+;; Url: https://github.com/CallumCameron/term-alert
 ;; Keywords: notifications processes
+;; Package-Requires: ((term-cmd "1.0") (simple-notify "1.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -147,16 +150,19 @@ explicitly disabled."
     (when (not term-alert-mode)
       (term-alert-mode))))
 
+;;;###autoload
 (defun term-alert-next-command-toggle (num)
   "Toggle whether to display an alert when a command next completes in this buffer.  If NUM is equal to `term-alert-count', disable Term Alert mode.  With prefix arg, alert for that number of commands."
   (interactive "p")
   (term-alert-set-count (if (< num 1) 1 num)))
 
+;;;###autoload
 (defun term-alert-all-toggle ()
   "Toggle whether to display an alert after all commands until further notice."
   (interactive)
   (term-alert-set-count -1))
 
+;;;###autoload
 (defun term-alert-callback (c a)
   "Respond to a completed command.  C and A are unused."
   (when term-alert-mode
@@ -166,6 +172,7 @@ explicitly disabled."
       (when (> term-alert-count 0)
         (term-alert-set-count (- term-alert-count 1))))))
 
+;;;###autoload
 (add-to-list 'term-cmd-commands-alist '("term-alert-done" . term-alert-callback))
 
 (provide 'term-alert)
