@@ -60,6 +60,10 @@
 ;;
 ;; Emacs:
 ;;
+;; Install the 'term-alert' package from MELPA.
+;;
+;; Or, for a manual install:
+;;
 ;;   1. Install the dependencies: 'term-cmd'
 ;;      (https://github.com/CallumCameron/term-cmd) and 'alert'
 ;;      (https://github.com/jwiegley/alert)
