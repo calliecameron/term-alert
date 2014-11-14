@@ -103,12 +103,15 @@
 ;;
 ;;     function term-alert-precmd()
 ;;     {
-;;         print '\033TeRmCmD term-alert-done'
+;;         if [[ "${TERM}" =~ 'eterm' ]]; then
+;;             env printf '\033TeRmCmD term-alert-done\n'
+;;         elif [ "${TERM}" = 'screen' ] && [ ! -z "${TMUX}" ] &&
+;;                  [[ "$(tmux display-message -p '#{client_termname}')" =~ 'eterm' ]]; then
+;;             env printf '\033Ptmux;\033\033TeRmCmD term-alert-done\n\033\\'
+;;         fi
 ;;     }
 ;;
-;;     if [[ "${TERM}" =~ 'eterm' ]]; then
-;;         precmd_functions=($precmd_functions term-alert-precmd)
-;;     fi
+;;     precmd_functions=($precmd_functions term-alert-precmd)
 ;;
 ;; The file 'enable.zsh' in this package's git repository does exactly
 ;; that; source it in your zshrc and everything will be set up
