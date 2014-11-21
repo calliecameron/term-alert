@@ -155,7 +155,8 @@ explicitly disabled."
       (when term-alert-mode
         (term-alert-mode -1))
     (when (not term-alert-mode)
-      (term-alert-mode))))
+      (term-alert-mode)))
+  (force-mode-line-update))
 
 ;;;###autoload
 (defun term-alert-next-command-toggle (num)
