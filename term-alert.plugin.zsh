@@ -1,7 +1,6 @@
 # Source this file in your zshrc to set everything up for term-alert
 
-function term-alert-precmd()
-{
+function term-alert-precmd() {
     if [[ "${TERM}" =~ 'eterm' ]]; then
         env printf '\033TeRmCmD term-alert-done\n'
     elif [ "${TERM}" = 'screen' ] && [ ! -z "${TMUX}" ] &&
