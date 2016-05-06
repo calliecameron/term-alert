@@ -1,12 +1,12 @@
-;;; term-alert.el --- Get notifications when commands complete in the Emacs terminal emulator
+;;; term-alert.el --- Notifications when commands complete in term.el. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2014 Callum J. Cameron
+;; Copyright (C) 2014-2016 Callum J. Cameron
 
 ;; Author: Callum J. Cameron <cjcameron7@gmail.com>
-;; Version: 1.0
+;; Version: 1.1
 ;; Url: https://github.com/CallumCameron/term-alert
 ;; Keywords: notifications processes
-;; Package-Requires: ((term-cmd "1.0") (alert "1.1"))
+;; Package-Requires: ((emacs "24.0") (term-cmd "1.1") (alert "1.1") (f "0.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -25,108 +25,69 @@
 
 ;;; Commentary:
 
-;; Get notifications when commands complete in the Emacs terminal
-;; emulator.
+;; Notifications when commands complete in term.el.
 ;;
-;;
-;; Usage:
+;; Usage
 ;;
 ;; Suppose you start a command in the terminal emulator, but it's
 ;; taking much longer than expected.  You want to go and do other
 ;; things, but don't want to have to keep checking the terminal buffer
-;; to see if that command has finished.  So you use term-alert mode:
+;; to see if that command has finished.  So you use term-alert:
 ;;
-;;   1. In the terminal buffer, run `term-alert-next-command-toggle`
-;;   2. When the running command finishes, a notification pops up to
-;;      tell you
+;; 1. In the terminal buffer, run `term-alert-next-command-toggle'.
+;; 2. When the running command finishes, a notification pops up to
+;;    tell you.
 ;;
 ;; If you want to get notifications for all commands in a buffer (not
-;; just the current/next one), run `term-alert-all-toggle`, and all
+;; just the current/next one), run `term-alert-all-toggle', and all
 ;; commands will generate alerts until you explicitly turn it off.
 ;;
 ;; Because it's entirely inside Emacs, you don't need to stop the
 ;; command to enable an alert on it (an advantage over 'alert' shell
 ;; commands, which usually require you to pause the command and
-;; restart it).  And because it uses 'term-cmd'
+;; restart it).  And because it uses term-cmd
 ;; (https://github.com/CallumCameron/term-cmd), you can alert commands
-;; running over SSH, too (as long as the remote shell is set up
-;; correctly).
+;; running in tmux or over SSH, too (as long as the remote shell is
+;; set up correctly).
+;;
+;; Set up keybindings:
+;;
+;;     ;; I'm on a UK keyboard, where # and ' are next to Enter
+;;     (define-key term-raw-map (kbd "C-#") 'term-alert-next-command-toggle)
+;;     (define-key term-raw-map (kbd "M-#") 'term-alert-all-toggle)
+;;     (define-key term-raw-map (kbd "C-'") 'term-alert-runtime)
 ;;
 ;;
-;; Installation:
+;; Installation
 ;;
-;; You need to install the Emacs package, and configure your shell to
-;; interact with it.
+;; Install the term-alert package from MELPA.
 ;;
-;; Emacs:
+;; Set up your shell; in zsh you also get timing information in
+;; notifications.
 ;;
-;; Install the 'term-alert' package from MELPA.
+;; - zsh: 'source ~/.emacs.d/term-alert/setup.zsh'
+;; - bash: 'source ~/.emacs.d/term-alert/setup.bash'
 ;;
-;; Or, for a manual install:
-;;
-;;   1. Install the dependencies: 'term-cmd'
-;;      (https://github.com/CallumCameron/term-cmd) and 'alert'
-;;      (https://github.com/jwiegley/alert)
-;;   2. Make sure this file is on your load path
-;;   3. (require 'term-alert)
-;;
-;; You'll want to set up key bindings for
-;; `term-alert-next-command-toggle` and `term-alert-all-toggle`.  My
-;; configuration looks like this (I use 'multi-term'
-;; (http://www.emacswiki.org/emacs/MultiTerm); a plain term.el setup
-;; will be slightly different):
-;;
-;;     ;; I'm on a UK keyboard, where '#' is next to Enter, and easily accessible
-;;     (add-hook 'term-mode-hook
-;;               (lambda ()
-;;                 (local-set-key (kbd "C-#") 'term-alert-next-command-toggle)
-;;                 (local-set-key (kbd "M-#") 'term-alert-all-toggle)))
-;;
-;;     (add-to-list 'term-bind-key-alist '("C-#" . term-alert-next-command-toggle))
-;;     (add-to-list 'term-bind-key-alist '("M-#" . term-alert-all-toggle))
-;;
-;; Shell:
-;;
-;; You need to configure your shell to emit a 'magic escape sequence'
-;; whenever a command finishes.  The escape sequence looks like:
-;;
-;;     # Using GNU printf
-;;     /usr/bin/printf '\eTeRmCmD term-alert-done\n'
-;;
-;;     # With a shell built-in (ZSH shown)
-;;     print '\033TeRmCmD term-alert-done'
-;;
-;; Exactly how you do this depends on your shell.  For ZSH, you can
-;; use the 'precmd' hook (strictly speaking, this is called when the
-;; prompt is displayed, rather than when a command finishes, but the
-;; effect is the same):
-;;
-;;     function term-alert-precmd()
-;;     {
-;;         if [[ "${TERM}" =~ 'eterm' ]]; then
-;;             env printf '\033TeRmCmD term-alert-done\n'
-;;         elif [ "${TERM}" = 'screen' ] && [ ! -z "${TMUX}" ] &&
-;;                  [[ "$(tmux display-message -p '#{client_termname}')" =~ 'eterm' ]]; then
-;;             env printf '\033Ptmux;\033\033TeRmCmD term-alert-done\n\033\\'
-;;         fi
-;;     }
-;;
-;;     precmd_functions=($precmd_functions term-alert-precmd)
-;;
-;; The file 'enable.zsh' in this package's git repository does exactly
-;; that; source it in your zshrc and everything will be set up
-;; correctly.
-;;
-;; In other shells, check the manual for how to do this.
+;; (Replace ~/.emacs.d with wherever your `user-emacs-directory' is.)
 
 ;;; Code:
 
 (require 'term)
 (require 'term-cmd)
 (require 'alert)
+(require 'f)
 
-(defvar term-alert-count -1 "Number of alerts to display for this buffer, after which alert mode will disable itself; if < 0, no limit.")
-(make-variable-buffer-local 'term-alert-count)
+(defvar term-alert--count -1
+  "Number of alerts to display for this buffer, after which alert mode will disable itself; if < 0, no limit.")
+(make-variable-buffer-local 'term-alert--count)
+
+(defvar term-alert--command-started-time nil
+  "When the most recent shell command started.")
+(make-variable-buffer-local 'term-alert--command-started-time)
+
+(defvar term-alert--command-done-time nil
+  "When the most recent shell command finished.")
+(make-variable-buffer-local 'term-alert--command-done-time)
 
 
 (define-minor-mode term-alert-mode
@@ -138,20 +99,18 @@ enables the mode, `toggle' toggles the state.
 When Term Alert mode is enabled, alerts will be displayed after each
 completed command in the terminal. (Note that this requires
 cooperation from the shell process; see the readme for this package.)
-The variable `term-alert-count' controls how many commands should be
-alerted; if it is positive, it will be decremented after each command,
-and Term Alert mode will disable itself when the value reaches 0. If
-it is negative, commands will be alerted until Term Alert mode is
-explicitly disabled."
+Interactively, use `term-alert-next-command-toggle' and
+`term-alert-all-toggle' to control how many commands will be alerted;
+don't activate `term-alert-mode' directly."
   nil
-  (:eval (concat " alert" (if (> term-alert-count 0) (format "[%d]" term-alert-count) "")))
+  (:eval (concat " alert" (if (> term-alert--count 0) (format "[%d]" term-alert--count) "")))
   nil)
 
 
-(defun term-alert-set-count (number)
-  "Set the NUMBER of commands to alert, and enable/disable Term Alert mode accordingly.  If num is equal to `term-alert-count', disable the mode."
-  (setq term-alert-count (if (eq number term-alert-count) 0 number))
-  (if (eq term-alert-count 0)
+(defun term-alert--set-count (number)
+  "Set the NUMBER of commands to alert, and enable/disable Term Alert mode accordingly.  If num is equal to `term-alert--count', disable the mode."
+  (setq term-alert--count (if (eq number term-alert--count) 0 number))
+  (if (eq term-alert--count 0)
       (when term-alert-mode
         (term-alert-mode -1))
     (when (not term-alert-mode)
@@ -160,29 +119,89 @@ explicitly disabled."
 
 ;;;###autoload
 (defun term-alert-next-command-toggle (num)
-  "Toggle whether to display an alert when a command next completes in this buffer.  If NUM is equal to `term-alert-count', disable Term Alert mode.  With prefix arg, alert for that number of commands."
+  "Toggle whether to display an alert when a command next completes in this buffer.  If NUM is equal to `term-alert--count', disable Term Alert mode.  With prefix arg, alert for that number of commands."
   (interactive "p")
-  (term-alert-set-count (if (< num 1) 1 num)))
+  (term-alert--set-count (if (< num 1) 1 num)))
 
 ;;;###autoload
 (defun term-alert-all-toggle ()
   "Toggle whether to display an alert after all commands until further notice."
   (interactive)
-  (term-alert-set-count -1))
+  (term-alert--set-count -1))
+
+(defun term-alert--get-runtime ()
+  "Pretty-formatted runtime of the most recent command."
+  (if term-alert--command-started-time
+      (format-seconds
+       "%dd %hh %mm %z%ss"
+       (time-to-seconds
+        (if term-alert--command-done-time
+            (time-subtract term-alert--command-done-time term-alert--command-started-time)
+          (time-since term-alert--command-started-time))))
+    ""))
 
 ;;;###autoload
-(defun term-alert-callback (c a)
-  "Respond to a completed command.  C and A are unused."
+(defun term-alert-runtime ()
+  "Display the running time of the most recent command."
+  (interactive)
+  (alert
+   (if term-alert--command-started-time
+       (format
+        "Most recent command started at %s (runtime %s)"
+        (current-time-string term-alert--command-started-time)
+        (term-alert--get-runtime))
+     "No timing information available")
+   :title "Emacs"))
+
+;;;###autoload
+(defun term-alert--started-callback (_c _a)
+  ;; checkdoc-params: (_c _a)
+  "Respond to a started command."
+  (setq term-alert--command-started-time (current-time))
+  (setq term-alert--command-done-time nil))
+
+;;;###autoload
+(defun term-alert--done-callback (_c _a)
+  ;; checkdoc-params: (_c _a)
+  "Respond to a completed command."
+  (unless term-alert--command-done-time
+    (setq term-alert--command-done-time (current-time)))
   (when term-alert-mode
-    (when (not (eq term-alert-count 0))
+    (when (not (eq term-alert--count 0))
       (alert
-       (concat "Command completed in " (buffer-name))
+       (format
+        "Command completed in %s%s"
+        (buffer-name)
+        (if term-alert--command-started-time
+            (format " (runtime %s)" (term-alert--get-runtime))
+          ""))
        :title "Emacs")
-      (when (> term-alert-count 0)
-        (term-alert-set-count (- term-alert-count 1))))))
+      (when (> term-alert--count 0)
+        (term-alert--set-count (- term-alert--count 1))))))
+
+(defconst term-alert--bin-dir (f-expand (f-join user-emacs-directory "term-alert")))
+
+(defun term-alert--ensure-file (name)
+  "Copy file NAME from the package directory to a stable path."
+  (let ((source (f-join (f-parent load-file-name) "bin" name))
+        (dest (f-join term-alert--bin-dir name)))
+    (when (f-exists? dest)
+      (f-delete dest))
+    (f-copy source dest)))
 
 ;;;###autoload
-(add-to-list 'term-cmd-commands-alist '("term-alert-done" . term-alert-callback))
+(defun term-alert--init ()
+  "Internal term-alert initialisation function."
+  (f-mkdir user-emacs-directory)
+  (f-mkdir term-alert--bin-dir)
+  (term-alert--ensure-file "setup.zsh")
+  (term-alert--ensure-file "setup.bash")
+  (add-to-list 'term-cmd-commands-alist '("term-alert-started" . term-alert--started-callback))
+  (add-to-list 'term-cmd-commands-alist '("term-alert-done" . term-alert--done-callback)))
+
+;;;###autoload
+(term-alert--init)
+
 
 (provide 'term-alert)
 
