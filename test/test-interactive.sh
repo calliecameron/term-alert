@@ -2,10 +2,8 @@
 
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-cd "${THIS_DIR}/.." &&
-cask package &&
-cd ~ &&
-emacs -Q --eval \
+function test-it() {
+    emacs -Q --eval \
 "(progn
    (setq debug-on-error t)
    (setq user-emacs-directory \"${THIS_DIR}/../emacs.d/\")
@@ -20,7 +18,14 @@ emacs -Q --eval \
    (define-key term-raw-map (kbd \"M-#\") 'term-alert-all-toggle)
    (define-key term-raw-map (kbd \"C-'\") 'term-alert-runtime)
    (setq alert-default-style 'notifications)
-   (ansi-term \"${THIS_DIR}/ansi-term-test.sh\")
+   (ansi-term \"${THIS_DIR}/ansi-term-test-${1}.sh\")
    (sleep-for 5)
-   (term-send-string (get-buffer-process (current-buffer)) \"source \\\"${THIS_DIR}/../bin/setup.zsh\\\"\")
+   (term-send-string (get-buffer-process (current-buffer)) \"source \\\"${THIS_DIR}/../bin/setup.${1}\\\"\")
    (term-send-input))"
+}
+
+cd "${THIS_DIR}/.." &&
+cask package &&
+cd ~ &&
+test-it bash &&
+test-it zsh

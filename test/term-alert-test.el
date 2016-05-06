@@ -23,7 +23,6 @@
 ;;; Code:
 
 (require 'f)
-(require 'dash)
 
 (defconst term-alert-test--root (f-parent (f-parent load-file-name)))
 (defconst term-alert-test--bin (f-join term-alert-test--root "bin"))
@@ -35,6 +34,9 @@
 (require 'term-alert)
 
 (ert-deftest term-alert-files ()
+  (should (f-directory? term-alert--bin-dir))
+  (should (f-file? (f-join term-alert--bin-dir "setup.zsh")))
+  (should (f-file? (f-join term-alert--bin-dir "setup.bash")))
   (should (eq (call-process
                "cmp"
                nil
@@ -42,8 +44,8 @@
                nil
                "-s"
                (f-join term-alert-test--bin "setup.zsh")
-               (f-join term-alert--bin-dir "setup.zsh")
-              0)))
+               (f-join term-alert--bin-dir "setup.zsh"))
+              0))
   (should (eq (call-process
                "cmp"
                nil
@@ -51,7 +53,7 @@
                nil
                "-s"
                (f-join term-alert-test--bin "setup.bash")
-               (f-join term-alert--bin-dir "setup.bash")
-              0))))
+               (f-join term-alert--bin-dir "setup.bash"))
+              0)))
 
 ;;; term-alert-test.el ends here
