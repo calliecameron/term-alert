@@ -1,9 +1,9 @@
 function term-alert-preexec() {
-    emacs-term-cmd term-alert-started
+    type emacs-term-cmd &>/dev/null && emacs-term-cmd term-alert-started
 }
 
 function term-alert-precmd() {
-    emacs-term-cmd term-alert-done
+    type emacs-term-cmd &>/dev/null && emacs-term-cmd term-alert-done
 }
 
 preexec_functions=($preexec_functions term-alert-preexec)

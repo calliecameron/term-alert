@@ -1,5 +1,5 @@
 function term-alert-done() {
-    emacs-term-cmd term-alert-done
+    type emacs-term-cmd &>/dev/null && emacs-term-cmd term-alert-done
 }
 
 if [ -z "${PROMPT_COMMAND}" ]; then

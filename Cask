@@ -3,7 +3,7 @@
 
 (package "term-alert" "1.1" "Notifications when commands complete in term.el.")
 
-(files "*.el" "bin")
+(files "*.el" "setup")
 
 (depends-on "term-cmd")
 (depends-on "alert")

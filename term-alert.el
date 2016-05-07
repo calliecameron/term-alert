@@ -183,7 +183,7 @@ don't activate `term-alert-mode' directly."
 
 (defun term-alert--ensure-file (name)
   "Copy file NAME from the package directory to a stable path."
-  (let ((source (f-join (f-parent load-file-name) "bin" name))
+  (let ((source (f-join (f-parent load-file-name) "setup" name))
         (dest (f-join term-alert--bin-dir name)))
     (when (f-exists? dest)
       (f-delete dest))

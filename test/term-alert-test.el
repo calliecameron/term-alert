@@ -25,7 +25,7 @@
 (require 'f)
 
 (defconst term-alert-test--root (f-parent (f-parent load-file-name)))
-(defconst term-alert-test--bin (f-join term-alert-test--root "bin"))
+(defconst term-alert-test--setup (f-join term-alert-test--root "setup"))
 
 (setq user-emacs-directory (f-join term-alert-test--root "emacs.d"))
 
@@ -43,7 +43,7 @@
                nil
                nil
                "-s"
-               (f-join term-alert-test--bin "setup.zsh")
+               (f-join term-alert-test--setup "setup.zsh")
                (f-join term-alert--bin-dir "setup.zsh"))
               0))
   (should (eq (call-process
@@ -52,7 +52,7 @@
                nil
                nil
                "-s"
-               (f-join term-alert-test--bin "setup.bash")
+               (f-join term-alert-test--setup "setup.bash")
                (f-join term-alert--bin-dir "setup.bash"))
               0)))
 

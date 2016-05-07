@@ -20,7 +20,7 @@ function test-it() {
    (setq alert-default-style 'notifications)
    (ansi-term \"${THIS_DIR}/ansi-term-test-${1}.sh\")
    (sleep-for 5)
-   (term-send-string (get-buffer-process (current-buffer)) \"source \\\"${THIS_DIR}/../bin/setup.${1}\\\"\")
+   (term-send-string (get-buffer-process (current-buffer)) \"source \\\"${THIS_DIR}/../setup/setup.${1}\\\"\")
    (term-send-input))"
 }
 
