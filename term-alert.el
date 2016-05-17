@@ -6,7 +6,7 @@
 ;; Version: 1.1
 ;; Url: https://github.com/CallumCameron/term-alert
 ;; Keywords: notifications processes
-;; Package-Requires: ((emacs "24.0") (term-cmd "1.1") (alert "1.1") (f "0.0"))
+;; Package-Requires: ((emacs "24.0") (term-cmd "1.1") (alert "1.1") (f "0.18.2"))
 
 ;; This file is not part of GNU Emacs.
 
