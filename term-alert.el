@@ -57,6 +57,9 @@
 ;;     (define-key term-raw-map (kbd "M-#") 'term-alert-all-toggle)
 ;;     (define-key term-raw-map (kbd "C-'") 'term-alert-runtime)
 ;;
+;; You can change what happens when an alert occurs by setting the
+;; variable `term-alert-function'.
+;;
 ;;
 ;; Installation
 ;;
@@ -76,6 +79,10 @@
 (require 'term-cmd)
 (require 'alert)
 (require 'f)
+
+(defvar term-alert-function 'term-alert--default-alert
+  "Function called when an alert happens. Takes no arguments.")
+(make-variable-buffer-local 'term-alert-function)
 
 (defvar term-alert--count -1
   "Number of alerts to display for this buffer, after which alert mode will disable itself; if < 0, no limit.")
@@ -140,6 +147,15 @@ don't activate `term-alert-mode' directly."
           (time-since term-alert--command-started-time))))
     ""))
 
+(defun term-alert--get-message ()
+  "Pretty-formatted completion message for the most recent command."
+  (format
+   "Command completed in %s%s"
+   (buffer-name)
+   (if term-alert--command-started-time
+       (format " (runtime %s)" (term-alert--get-runtime))
+     "")))
+
 ;;;###autoload
 (defun term-alert-runtime ()
   "Display the running time of the most recent command."
@@ -168,16 +184,14 @@ don't activate `term-alert-mode' directly."
     (setq term-alert--command-done-time (current-time)))
   (when term-alert-mode
     (when (not (eq term-alert--count 0))
-      (alert
-       (format
-        "Command completed in %s%s"
-        (buffer-name)
-        (if term-alert--command-started-time
-            (format " (runtime %s)" (term-alert--get-runtime))
-          ""))
-       :title "Emacs")
+      (funcall term-alert-function)
       (when (> term-alert--count 0)
         (term-alert--set-count (- term-alert--count 1))))))
+
+(defun term-alert--default-alert ()
+  (alert
+   (term-alert--get-message)
+   :title "Emacs"))
 
 (defconst term-alert--bin-dir (f-expand (f-join user-emacs-directory "term-alert")))
 

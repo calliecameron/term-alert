@@ -20,6 +20,8 @@ function test-it() {
    (setq alert-default-style 'notifications)
    (ansi-term \"${THIS_DIR}/ansi-term-test-${1}.sh\")
    (sleep-for 5)
+   (term-send-string (get-buffer-process (current-buffer)) \"echo \\\"Testing for ${1}. C-# to toggle alert on next command, M-# to toggle alert on all commands, C-' to check runtime (only available in zsh). Try a few commands to make sure it works, then quit emacs.\\\"\")
+   (term-send-input)
    (term-send-string (get-buffer-process (current-buffer)) \"source \\\"${THIS_DIR}/../setup/setup.${1}\\\"\")
    (term-send-input))"
 }
