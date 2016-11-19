@@ -13,7 +13,7 @@ function test-it() {
                             (\"gnu\" . \"https://elpa.gnu.org/packages/\")))
    (package-initialize)
    (package-refresh-contents)
-   (package-install-file \"${THIS_DIR}/../dist/term-alert-1.1.tar\")
+   (package-install-file \"${THIS_DIR}/../dist/term-alert-1.2.tar\")
    (define-key term-raw-map (kbd \"C-#\") 'term-alert-next-command-toggle)
    (define-key term-raw-map (kbd \"M-#\") 'term-alert-all-toggle)
    (define-key term-raw-map (kbd \"C-'\") 'term-alert-runtime)

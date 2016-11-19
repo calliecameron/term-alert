@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014-2016 Callum J. Cameron
 
 ;; Author: Callum J. Cameron <cjcameron7@gmail.com>
-;; Version: 1.1
+;; Version: 1.2
 ;; Url: https://github.com/CallumCameron/term-alert
 ;; Keywords: notifications processes
 ;; Package-Requires: ((emacs "24.0") (term-cmd "1.1") (alert "1.1") (f "0.18.2"))
