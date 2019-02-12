@@ -2,8 +2,13 @@
 
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+EMACS_TO_RUN="${CASK_EMACS}"
+if [ -z "${CASK_EMACS}" ]; then
+    EMACS_TO_RUN='emacs'
+fi
+
 function test-it() {
-    emacs -Q --eval \
+    "${EMACS_TO_RUN}" -Q --eval \
 "(progn
    (setq debug-on-error t)
    (setq user-emacs-directory \"${THIS_DIR}/../emacs.d/\")
