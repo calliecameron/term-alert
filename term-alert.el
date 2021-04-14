@@ -1,10 +1,10 @@
 ;;; term-alert.el --- Notifications when commands complete in term.el. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2014-2016 Callum J. Cameron
+;; Copyright (C) 2014-2016 Callie Cameron
 
-;; Author: Callum J. Cameron <cjcameron7@gmail.com>
+;; Author: Callie Cameron <cjcameron7@gmail.com>
 ;; Version: 1.2
-;; Url: https://github.com/CallumCameron/term-alert
+;; Url: https://github.com/calliecameron/term-alert
 ;; Keywords: notifications processes
 ;; Package-Requires: ((emacs "24.0") (term-cmd "1.1") (alert "1.1") (f "0.18.2"))
 
@@ -46,7 +46,7 @@
 ;; command to enable an alert on it (an advantage over 'alert' shell
 ;; commands, which usually require you to pause the command and
 ;; restart it).  And because it uses term-cmd
-;; (https://github.com/CallumCameron/term-cmd), you can alert commands
+;; (https://github.com/calliecameron/term-cmd), you can alert commands
 ;; running in tmux or over SSH, too (as long as the remote shell is
 ;; set up correctly).
 ;;
