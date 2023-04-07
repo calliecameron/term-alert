@@ -1,4 +1,12 @@
-all: test
+all: lint test
+
+.PHONY: lint
+lint:
+	shellcheck setup/setup.bash test/ansi-term-test-bash.sh \
+		test/test-interactive.sh
+	shfmt -l -d -i 4 setup/setup.bash setup/setup.zsh \
+		test/ansi-term-test-bash.sh test/ansi-term-test-zsh.sh \
+		test/test-interactive.sh
 
 .PHONY: test
 test:

@@ -1,6 +1,6 @@
 ;;; term-alert-test.el --- Term-alert: tests.            -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2016  Callie Cameron
+;; Copyright (C) 2016--2023  Callie Cameron
 
 ;; Author: Callie Cameron <cjcameron7@gmail.com>
 ;; Keywords: terminals

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+THIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 EMACS_TO_RUN="${CASK_EMACS}"
 if [ -z "${CASK_EMACS}" ]; then
@@ -9,7 +9,7 @@ fi
 
 function test-it() {
     "${EMACS_TO_RUN}" -Q --eval \
-"(progn
+        "(progn
    (setq debug-on-error t)
    (setq user-emacs-directory \"${THIS_DIR}/../emacs.d/\")
    (require 'package)
@@ -32,7 +32,7 @@ function test-it() {
 }
 
 cd "${THIS_DIR}/.." &&
-cask package &&
-cd ~ &&
-test-it bash &&
-test-it zsh
+    cask package &&
+    cd ~ &&
+    test-it bash &&
+    test-it zsh

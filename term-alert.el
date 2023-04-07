@@ -1,6 +1,6 @@
 ;;; term-alert.el --- Notifications when commands complete in term.el. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2014-2016 Callie Cameron
+;; Copyright (C) 2014-2023 Callie Cameron
 
 ;; Author: Callie Cameron <cjcameron7@gmail.com>
 ;; Version: 1.2
