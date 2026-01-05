@@ -1,5 +1,9 @@
 function term-alert-done() {
-    type emacs-term-cmd &>/dev/null && emacs-term-cmd term-alert-done
+    if type _eat_msg &>/dev/null; then
+        _eat_msg term-alert-done
+    elif type emacs-term-cmd &>/dev/null; then
+        emacs-term-cmd term-alert-done
+    fi
 }
 
 # The sleep seems to force bash/ssh/tmux/... to flush, thereby avoiding a
@@ -9,7 +13,7 @@ function term-alert-done() {
 # bash). At some point I should really fix this in term-cmd, but this hack does
 # the job for now. Alternatively, just use zsh :)
 if [ -z "${PROMPT_COMMAND}" ]; then
-    PROMPT_COMMAND='emacs-term-cmd term-alert-done; sleep 0.05'
+    PROMPT_COMMAND='term-alert-done; sleep 0.05'
 else
-    PROMPT_COMMAND="${PROMPT_COMMAND}; emacs-term-cmd term-alert-done; sleep 0.05"
+    PROMPT_COMMAND="${PROMPT_COMMAND}; term-alert-done; sleep 0.05"
 fi

@@ -1,9 +1,17 @@
+function term-alert-cmd() {
+    if type _eat_msg &>/dev/null; then
+        _eat_msg "${1}"
+    elif type emacs-term-cmd &>/dev/null; then
+        emacs-term-cmd "${1}"
+    fi
+}
+
 function term-alert-preexec() {
-    type emacs-term-cmd &>/dev/null && emacs-term-cmd term-alert-started
+    term-alert-cmd term-alert-started
 }
 
 function term-alert-precmd() {
-    type emacs-term-cmd &>/dev/null && emacs-term-cmd term-alert-done
+    term-alert-cmd term-alert-done
 }
 
 preexec_functions=($preexec_functions term-alert-preexec)

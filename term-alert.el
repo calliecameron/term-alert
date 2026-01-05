@@ -1,10 +1,10 @@
-;;; term-alert.el --- Notifications when commands complete in term.el. -*- lexical-binding: t -*-
+;;; term-alert.el --- Notifications when commands complete in term.el and eat -*- lexical-binding: t -*-
 
-;; Copyright (C) 2014-2023 Callie Cameron
+;; Copyright (C) 2014-2026 Callie Cameron
 
 ;; Author: Callie Cameron <cjcameron7@gmail.com>
-;; Version: 1.2
-;; Url: https://github.com/calliecameron/term-alert
+;; Version: 1.3
+;; URL: https://github.com/calliecameron/term-alert
 ;; Keywords: notifications processes
 ;; Package-Requires: ((emacs "24.0") (term-cmd "1.1") (alert "1.1") (f "0.18.2"))
 
@@ -25,7 +25,7 @@
 
 ;;; Commentary:
 
-;; Notifications when commands complete in term.el.
+;; Notifications when commands complete in term.el and eat.
 ;;
 ;; Usage
 ;;
@@ -81,7 +81,7 @@
 (require 'f)
 
 (defvar term-alert-function 'term-alert--default-alert
-  "Function called when an alert happens. Takes no arguments.")
+  "Function called when an alert happens.  Takes no arguments.")
 (make-variable-buffer-local 'term-alert-function)
 
 (defvar term-alert--count -1
@@ -98,17 +98,16 @@
 
 
 (define-minor-mode term-alert-mode
-  "Toggle Term Alert mode. Interactively with no argument, this command
-toggles the mode. A positive prefix argument enables the mode, any
-other prefix argument disables it. From Lisp, argument omitted or nil
-enables the mode, `toggle' toggles the state.
+  "Toggle Term Alert mode.
+Interactively with no argument, this command toggles the mode.  A positive
+prefix argument enables the mode, any other prefix argument disables it.  From
+Lisp, argument omitted or nil enables the mode, `toggle' toggles the state.
 
-When Term Alert mode is enabled, alerts will be displayed after each
-completed command in the terminal. (Note that this requires
-cooperation from the shell process; see the readme for this package.)
-Interactively, use `term-alert-next-command-toggle' and
-`term-alert-all-toggle' to control how many commands will be alerted;
-don't activate `term-alert-mode' directly."
+When Term Alert mode is enabled, alerts will be displayed after each completed
+command in the terminal.  (Note that this requires cooperation from the shell
+process; see the readme for this package.)  Interactively, use
+`term-alert-next-command-toggle' and `term-alert-all-toggle' to control how many
+commands will be alerted; don't activate `term-alert-mode' directly."
   nil
   (:eval (concat " alert" (if (> term-alert--count 0) (format "[%d]" term-alert--count) "")))
   nil)
@@ -170,15 +169,13 @@ don't activate `term-alert-mode' directly."
    :title "Emacs"))
 
 ;;;###autoload
-(defun term-alert--started-callback (_c _a)
-  ;; checkdoc-params: (_c _a)
+(defun term-alert--started-callback ()
   "Respond to a started command."
   (setq term-alert--command-started-time (current-time))
   (setq term-alert--command-done-time nil))
 
 ;;;###autoload
-(defun term-alert--done-callback (_c _a)
-  ;; checkdoc-params: (_c _a)
+(defun term-alert--done-callback ()
   "Respond to a completed command."
   (unless term-alert--command-done-time
     (setq term-alert--command-done-time (current-time)))
@@ -203,6 +200,12 @@ don't activate `term-alert-mode' directly."
       (f-delete dest))
     (f-copy source dest)))
 
+(defmacro term-alert--install-command (command callback)
+  `(progn
+     (add-to-list 'term-cmd-commands-alist '(,command . (lambda (c a) (,callback))))
+     (when (boundp 'eat-message-handler-alist)
+       (add-to-list 'eat-message-handler-alist '(,command . (lambda (&rest args) (,callback)))))))
+
 ;;;###autoload
 (defun term-alert--init ()
   "Internal term-alert initialisation function."
@@ -210,8 +213,9 @@ don't activate `term-alert-mode' directly."
   (f-mkdir term-alert--bin-dir)
   (term-alert--ensure-file "setup.zsh")
   (term-alert--ensure-file "setup.bash")
-  (add-to-list 'term-cmd-commands-alist '("term-alert-started" . term-alert--started-callback))
-  (add-to-list 'term-cmd-commands-alist '("term-alert-done" . term-alert--done-callback)))
+  (require 'eat nil t)
+  (term-alert--install-command "term-alert-started" term-alert--started-callback)
+  (term-alert--install-command "term-alert-done" term-alert--done-callback))
 
 ;;;###autoload
 (term-alert--init)

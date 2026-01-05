@@ -3,7 +3,7 @@
 [![MELPA](https://melpa.org/packages/term-alert-badge.svg)](https://melpa.org/#/term-alert)
 [![MELPA Stable](https://stable.melpa.org/packages/term-alert-badge.svg)](https://stable.melpa.org/#/term-alert)
 
-Notifications when commands complete in term.el.
+Notifications when commands complete in term.el and [eat](https://codeberg.org/akib/emacs-eat).
 
 ## Usage
 
@@ -49,9 +49,12 @@ Set up your shell; in zsh you also get timing information in notifications.
 
 (Replace ~/.emacs.d with wherever your `user-emacs-directory` is.)
 
+If using with eat, set up eat's own [shell integration](https://elpa.nongnu.org/nongnu-devel/doc/eat.html#Shell-Integration)
+before sourcing the term-alert file.
+
 ## License
 
-Copyright (C) 2014--2023 Callie Cameron
+Copyright (C) 2014--2026 Callie Cameron
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
