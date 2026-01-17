@@ -79,6 +79,7 @@
 (require 'term-cmd)
 (require 'alert)
 (require 'f)
+(require 'eat nil t)
 
 (defvar term-alert-function 'term-alert--default-alert
   "Function called when an alert happens.  Takes no arguments.")
@@ -213,7 +214,6 @@ commands will be alerted; don't activate `term-alert-mode' directly."
   (f-mkdir term-alert--bin-dir)
   (term-alert--ensure-file "setup.zsh")
   (term-alert--ensure-file "setup.bash")
-  (require 'eat nil t)
   (term-alert--install-command "term-alert-started" term-alert--started-callback)
   (term-alert--install-command "term-alert-done" term-alert--done-callback))
 
