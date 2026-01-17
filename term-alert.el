@@ -72,6 +72,10 @@
 ;; - bash: 'source ~/.emacs.d/term-alert/setup.bash'
 ;;
 ;; (Replace ~/.emacs.d with wherever your `user-emacs-directory' is.)
+;;
+;; If using with eat, set up eat's own shell integration
+;; (https://elpa.nongnu.org/nongnu-devel/doc/eat.html#Shell-Integration)
+;; before sourcing the term-alert file.
 
 ;;; Code:
 
