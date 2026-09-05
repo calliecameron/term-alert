@@ -1,4 +1,6 @@
-# term-alert
+# This repository has [moved to Codeberg!](https://codeberg.org/calliecameron/term-alert)
+
+## term-alert
 
 [![MELPA](https://melpa.org/packages/term-alert-badge.svg)](https://melpa.org/#/term-alert)
 [![MELPA Stable](https://stable.melpa.org/packages/term-alert-badge.svg)](https://stable.melpa.org/#/term-alert)
